@@ -8,12 +8,18 @@ public class State implements GameState {
 	private int[][] table = new int[4][4];
 
 	public State(GameState original) {
+		for (int i = 0; i < table.length; i++) {
+			for (int j = 0; j < table.length; j++) {
+				table[i][j] = original.getValue(i,j);
+			}
+		}
 		
 	}
 
 	public State() {
-		// TODO Auto-generated constructor stub
-		
+		setEmptyBoard();
+		addTile();
+		addTile();
 	}
 
 	@Override
@@ -88,7 +94,7 @@ public class State implements GameState {
 	public boolean canMerge() {
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table[i].length; j++) {
-				if (table[i][j] >= 2048) {
+				if (table[i][j] <= 2048) {
 					return true;
 				}
 			}
@@ -98,9 +104,6 @@ public class State implements GameState {
 
 	@Override
 	public boolean reachedThreshold() {
-		if (isFull()) {
-			return false;
-		}
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table.length; j++) {
 				if (table[i][j] >= 2048) {
@@ -119,14 +122,14 @@ public class State implements GameState {
 			int index = 0;
 			
 			for (int col = 0; col < 4; col++) {
-			if (table[row][col] != 0 ) {
+				if (table[row][col] != 0 ) {
 					newRow[index] = table[row][col];
 					index++;
 				}
 			}
 			table[row] = newRow;
 			
-			for (int col = 0; col < 4; col++) {
+			for (int col = 0; col < 3; col++) {
 				if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
 					table[row][col] *= 2;
 					points += table[row][col];
@@ -149,8 +152,38 @@ public class State implements GameState {
 
 	@Override
 	public int right() {
-		// TODO Auto-generated method stub
-		return 0;
+		int points = 0;
+		for (int row = 0; row < 4; row++) {
+			int[] newRow = new int[4];
+			int index = 3;
+			
+			for (int col = 0; col < 4; col++) {
+				if (table[row][col] != 0 ) {
+					newRow[index] = table[row][col];
+					index--;
+				}
+			}
+			table[row] = newRow;
+			
+			for (int col = 0; col < 3; col++) {
+				if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
+					table[row][col] *= 2;
+					points += table[row][col];
+					table[row][col + 1] = 0;
+					col++;
+				}
+			}
+			int[] mergedRow = new int [4];
+			index = 3;
+			for (int col = 0; col < 4; col++) {
+				if (table[row][col] != 0) {
+					mergedRow[index] = table[row][col];
+					index--;
+				}
+			}
+			table[row] = mergedRow;
+		}
+		return points;
 	}
 
 	@Override
@@ -161,7 +194,15 @@ public class State implements GameState {
 
 	@Override
 	public int up() {
-		// TODO Auto-generated method stub
+		int points = 0;
+		for (int col = 0; col < 4; col++) {
+			int[] tempList = new int[4];
+			int index = 0;
+			
+			for (int row = 0; row < 4; row++) {
+				
+			}
+		}
 		return 0;
 	}
 

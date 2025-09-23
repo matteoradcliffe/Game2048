@@ -125,7 +125,9 @@ public class SmartPlayer {
 
 		@Override
 		public int right() {
-			// TODO Auto-generated method stub
+			/*
+			 * should be similar implementation to left() only diff is the indexes and for loops should be flip flopped.
+			 */
 			return 0;
 		}
 
