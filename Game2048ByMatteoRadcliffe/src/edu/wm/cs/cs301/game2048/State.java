@@ -128,7 +128,6 @@ public class State implements GameState {
 				}
 			}
 			table[row] = newRow;
-			
 			for (int col = 0; col < 3; col++) {
 				if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
 					table[row][col] *= 2;
@@ -188,22 +187,47 @@ public class State implements GameState {
 
 	@Override
 	public int down() {
-		// TODO Auto-generated method stub
-		return 0;
+		
 	}
 
 	@Override
 	public int up() {
 		int points = 0;
 		for (int col = 0; col < 4; col++) {
-			int[] tempList = new int[4];
+			int[] newCol = new int[4];
 			int index = 0;
 			
 			for (int row = 0; row < 4; row++) {
-				
+				if (table[row][col] != 0 ) {
+					newCol[index] = table[row][col];
+					index++;
+				}
+			}
+			for (int row = 0; row < 4; row++) {
+				table[row][col] = newCol[row];
+			}
+			
+			for (int row = 0; row < 3; row++) {
+				if (table[row][col] != 0 && table[row][col] == table[row + 1][col]) {
+					table[row][col] *= 2;
+					points += table[row][col];
+					table[row + 1][col] = 0;
+					row++;
+				}
+			}
+			int[] mergedCol = new int [4];
+			index = 0;
+			for (int row = 0; row < 4; row++) {
+				if (table[row][col] != 0) {
+					mergedCol[index] = table[row][col];
+					index++;
+				}
+			}
+			for (int row = 0; row < 4; row++) {
+				table[row][col] = mergedCol[row];
 			}
 		}
-		return 0;
+		return points;
 	}
 
 }
