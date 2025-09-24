@@ -8,9 +8,6 @@ import java.util.Random;
 public class State implements GameState {
 	private int[][] table = new int[4][4];
 	
-	public GameState createState(GameState original) {
-	    return new State(original);
-	}
 	
 	public State(GameState original) {
 		for (int i = 0; i < table.length; i++) {
