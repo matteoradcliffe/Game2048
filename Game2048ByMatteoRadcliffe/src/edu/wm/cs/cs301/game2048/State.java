@@ -135,7 +135,7 @@ public class State implements GameState {
 			}
 			table[row] = newRow;
 			for (int col = 0; col < 3; col++) {
-				if (table[row][col] != 0 && table[row][col] == table[row][col - 1]) {
+				if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
 					table[row][col] *= 2;
 					points += table[row][col];
 					table[row][col + 1] = 0;
