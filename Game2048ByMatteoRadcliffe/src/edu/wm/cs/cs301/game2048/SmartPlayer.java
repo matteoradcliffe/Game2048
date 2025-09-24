@@ -8,14 +8,27 @@ public class SmartPlayer {
 
 	public class State implements GameState {
 		private int[][] table = new int[4][4];
+		/*
+		 * I created a
+		 */
 
 		public State(GameState original) {
+			/*
+			 * 
+			 */
+			for (int i = 0; i < table.length; i++) {
+				for (int j = 0; j < table.length; j++) {
+					table[i][j] = original.getValue(i,j);
+					
+				}
+			}
 			
 		}
 
 		public State() {
-			// TODO Auto-generated constructor stub
-			
+			setEmptyBoard();
+			addTile();
+			addTile();
 		}
 
 		@Override
@@ -54,6 +67,7 @@ public class SmartPlayer {
 					}
 				}
 			}
+			
 			Random rand = new Random();
 			int randomIndex = rand.nextInt(emptyTiles.size());
 			int[] chosenSlot = emptyTiles.get(randomIndex);
@@ -71,8 +85,6 @@ public class SmartPlayer {
 			table[row][col] = newValue;
 			
 			return true;
-			
-			
 		}
 
 		@Override
@@ -91,7 +103,7 @@ public class SmartPlayer {
 		public boolean canMerge() {
 			for (int i = 0; i < table.length; i++) {
 				for (int j = 0; j < table[i].length; j++) {
-					if (table[i][j] >= 2048) {
+					if (table[i][j] <= 2048) {
 						return true;
 					}
 				}
@@ -101,9 +113,6 @@ public class SmartPlayer {
 
 		@Override
 		public boolean reachedThreshold() {
-			if (isFull()) {
-				return true;
-			}
 			for (int i = 0; i < table.length; i++) {
 				for (int j = 0; j < table.length; j++) {
 					if (table[i][j] >= 2048) {
@@ -116,34 +125,154 @@ public class SmartPlayer {
 
 		@Override
 		public int left() {
-			/*
-			 * I need to iterate through each row in the table 2d array and in each row move the col(x) position to 0. once this is
-			 * done I can then find the value of that tile, save it in a variable, and add each value of each row to find total. 
-			 */
-			return 0;
+			int points = 0;
+			for (int row = 0; row < 4; row++) {
+				int[] newRow = new int[4];
+				int index = 0;
+				
+				for (int col = 0; col < 4; col++) {
+					if (table[row][col] != 0 ) {
+						newRow[index] = table[row][col];
+						index++;
+					}
+				}
+				table[row] = newRow;
+				for (int col = 0; col < 3; col++) {
+					if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
+						table[row][col] *= 2;
+						points += table[row][col];
+						table[row][col + 1] = 0;
+						col++;
+					}
+				}
+				int[] mergedRow = new int [4];
+				index = 0;
+				for (int col = 0; col < 4; col++) {
+					if (table[row][col] != 0) {
+						mergedRow[index] = table[row][col];
+						index++;
+					}
+				}
+				table[row] = mergedRow;
+			}
+			return points;
 		}
 
 		@Override
 		public int right() {
-			/*
-			 * should be similar implementation to left() only diff is the indexes and for loops should be flip flopped.
-			 */
-			return 0;
+			int points = 0;
+			for (int row = 0; row < 4; row++) {
+				int[] newRow = new int[4];
+				int index = 3;
+				
+				for (int col = 0; col < 4; col++) {
+					if (table[row][col] != 0 ) {
+						newRow[index] = table[row][col];
+						index--;
+					}
+				}
+				table[row] = newRow;
+				
+				for (int col = 0; col < 3; col++) {
+					if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
+						table[row][col] *= 2;
+						points += table[row][col];
+						table[row][col + 1] = 0;
+						col++;
+					}
+				}
+				int[] mergedRow = new int [4];
+				index = 3;
+				for (int col = 0; col < 4; col++) {
+					if (table[row][col] != 0) {
+						mergedRow[index] = table[row][col];
+						index--;
+					}
+				}
+				table[row] = mergedRow;
+			}
+			return points;
 		}
 
 		@Override
 		public int down() {
-			// TODO Auto-generated method stub
-			return 0;
+			int points = 0;
+			for (int col = 0; col < 4; col++) {
+				int[] newCol = new int[4];
+				int index = 3;
+				
+				for (int row = 0; row < 4; row++) {
+					if (table[row][col] != 0 ) {
+						newCol[index] = table[row][col];
+						index--;
+					}
+				}
+				for (int row = 0; row < 4; row++) {
+					table[row][col] = newCol[row];
+				}
+				
+				for (int row = 0; row < 3; row++) {
+					if (table[row][col] != 0 && table[row][col] == table[row + 1][col]) {
+						table[row][col] *= 2;
+						points += table[row][col];
+						table[row + 1][col] = 0;
+						row++;
+					}
+				}
+				int[] mergedCol = new int [4];
+				index = 3;
+				for (int row = 0; row < 4; row++) {
+					if (table[row][col] != 0) {
+						mergedCol[index] = table[row][col];
+						index--;
+					}
+				}
+				for (int row = 0; row < 4; row++) {
+					table[row][col] = mergedCol[row];
+				}
+			}
+			return points;
 		}
 
 		@Override
 		public int up() {
-			// TODO Auto-generated method stub
-			return 0;
+			int points = 0;
+			for (int col = 0; col < 4; col++) {
+				int[] newCol = new int[4];
+				int index = 0;
+				
+				for (int row = 0; row < 4; row++) {
+					if (table[row][col] != 0 ) {
+						newCol[index] = table[row][col];
+						index++;
+					}
+				}
+				for (int row = 0; row < 4; row++) {
+					table[row][col] = newCol[row];
+				}
+				
+				for (int row = 0; row < 3; row++) {
+					if (table[row][col] != 0 && table[row][col] == table[row + 1][col]) {
+						table[row][col] *= 2;
+						points += table[row][col];
+						table[row + 1][col] = 0;
+						row++;
+					}
+				}
+				int[] mergedCol = new int [4];
+				index = 0;
+				for (int row = 0; row < 4; row++) {
+					if (table[row][col] != 0) {
+						mergedCol[index] = table[row][col];
+						index++;
+					}
+				}
+				for (int row = 0; row < 4; row++) {
+					table[row][col] = mergedCol[row];
+				}
+			}
+			return points;
 		}
 
 	}
-
-
 }
