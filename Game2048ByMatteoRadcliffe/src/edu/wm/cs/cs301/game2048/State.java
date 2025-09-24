@@ -2,10 +2,13 @@ package edu.wm.cs.cs301.game2048;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class State implements GameState {
 	private int[][] table = new int[4][4];
+	
+	
 
 	public State(GameState original) {
 		for (int i = 0; i < table.length; i++) {
@@ -15,11 +18,8 @@ public class State implements GameState {
 		}
 		
 	}
-
 	public State() {
 		setEmptyBoard();
-		addTile();
-		addTile();
 	}
 
 	@Override
@@ -94,7 +94,14 @@ public class State implements GameState {
 	public boolean canMerge() {
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table[i].length; j++) {
-				if (table[i][j] <= 2048) {
+				int value = table[i][j];
+				if (value == 0) {
+					continue;
+				}
+				if ( j < 3 && table[i][j+1] == value) {
+					return true;
+				}
+				if ( i < 3 && table[i+1][j] == value) {
 					return true;
 				}
 			}
@@ -156,7 +163,7 @@ public class State implements GameState {
 			int[] newRow = new int[4];
 			int index = 3;
 			
-			for (int col = 0; col < 4; col++) {
+			for (int col = 3; col >= 0; col--) {
 				if (table[row][col] != 0 ) {
 					newRow[index] = table[row][col];
 					index--;
@@ -164,17 +171,17 @@ public class State implements GameState {
 			}
 			table[row] = newRow;
 			
-			for (int col = 0; col < 3; col++) {
-				if (table[row][col] != 0 && table[row][col] == table[row][col + 1]) {
+			for (int col = 3; col > 0; col--) {
+				if (table[row][col] != 0 && table[row][col] == table[row][col - 1]) {
 					table[row][col] *= 2;
 					points += table[row][col];
-					table[row][col + 1] = 0;
-					col++;
+					table[row][col - 1] = 0;
+					col--;
 				}
 			}
 			int[] mergedRow = new int [4];
 			index = 3;
-			for (int col = 0; col < 4; col++) {
+			for (int col = 3; col >= 0; col--) {
 				if (table[row][col] != 0) {
 					mergedRow[index] = table[row][col];
 					index--;
@@ -192,7 +199,7 @@ public class State implements GameState {
 			int[] newCol = new int[4];
 			int index = 3;
 			
-			for (int row = 0; row < 4; row++) {
+			for (int row = 3; row >= 0; row--) {
 				if (table[row][col] != 0 ) {
 					newCol[index] = table[row][col];
 					index--;
@@ -202,17 +209,17 @@ public class State implements GameState {
 				table[row][col] = newCol[row];
 			}
 			
-			for (int row = 0; row < 3; row++) {
-				if (table[row][col] != 0 && table[row][col] == table[row + 1][col]) {
+			for (int row = 3; row > 0; row--) {
+				if (table[row][col] != 0 && table[row][col] == table[row - 1][col]) {
 					table[row][col] *= 2;
 					points += table[row][col];
-					table[row + 1][col] = 0;
-					row++;
+					table[row - 1][col] = 0;
+					row--;
 				}
 			}
 			int[] mergedCol = new int [4];
 			index = 3;
-			for (int row = 0; row < 4; row++) {
+			for (int row = 3; row >= 0; row--) {
 				if (table[row][col] != 0) {
 					mergedCol[index] = table[row][col];
 					index--;
@@ -263,6 +270,26 @@ public class State implements GameState {
 			}
 		}
 		return points;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(table);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		State other = (State) obj;
+		return Arrays.deepEquals(table, other.table);
 	}
 
 }
