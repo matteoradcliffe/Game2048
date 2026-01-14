@@ -10,23 +10,41 @@ public class State implements GameState {
 	
 	
 	public State(GameState original) {
+		table = new int[4][4];
 		for (int i = 0; i < table.length; i++) {
 			for (int j = 0; j < table.length; j++) {
 				table[i][j] = original.getValue(i,j);
 			}
 		}
-		
 	}
 	public State() {
 		setEmptyBoard();
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(table);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		State other = (State) obj;
+		return Arrays.deepEquals(table, other.table);
+	}
+
 
 	@Override
 	public int getValue(int xCoordinate, int yCoordinate) {
-		int x = xCoordinate;
-		int y = yCoordinate;
-		
-		return table[y][x];
+		return table[yCoordinate][xCoordinate];
 	}
 
 	@Override
@@ -80,7 +98,7 @@ public class State implements GameState {
 	@Override
 	public boolean isFull() {
 		for (int i = 0; i < table.length; i++) {
-			for(int j = 0; j < table[i].length; j++) {
+			for(int j = 0; j < table.length; j++) {
 				if (table[i][j] == 0) {
 					return false;
 				}
@@ -92,7 +110,7 @@ public class State implements GameState {
 	@Override
 	public boolean canMerge() {
 		for (int i = 0; i < table.length; i++) {
-			for (int j = 0; j < table[i].length; j++) {
+			for (int j = 0; j < table.length; j++) {
 				int value = table[i][j];
 				if (value == 0) {
 					continue;
@@ -269,26 +287,6 @@ public class State implements GameState {
 			}
 		}
 		return points;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.deepHashCode(table);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		State other = (State) obj;
-		return Arrays.deepEquals(table, other.table);
 	}
 
 }
